@@ -1,5 +1,5 @@
-import { createInviteAction } from "@/actions/family";
-import { Card, PageHeader, primaryButtonClass } from "@/components/ui";
+import { createInviteAction, savePhoneAction } from "@/actions/family";
+import { Card, PageHeader, inputClass, primaryButtonClass, secondaryButtonClass } from "@/components/ui";
 import { requireFamily } from "@/lib/session";
 import { db, schema } from "@meusaldo/db";
 import { asc, eq } from "drizzle-orm";
@@ -7,19 +7,25 @@ import { asc, eq } from "drizzle-orm";
 export default async function FamilyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ token?: string }>;
+  searchParams: Promise<{ token?: string; erro?: string }>;
 }) {
   const user = await requireFamily();
-  const { token } = await searchParams;
+  const { token, erro } = await searchParams;
 
   const [[family], members] = await Promise.all([
     db.select().from(schema.families).where(eq(schema.families.id, user.familyId)),
     db
-      .select({ id: schema.users.id, name: schema.users.name, email: schema.users.email })
+      .select({
+        id: schema.users.id,
+        name: schema.users.name,
+        email: schema.users.email,
+        phone: schema.users.phone,
+      })
       .from(schema.users)
       .where(eq(schema.users.familyId, user.familyId))
       .orderBy(asc(schema.users.createdAt)),
   ]);
+  const myPhone = members.find((m) => m.id === user.id)?.phone ?? "";
 
   const baseUrl = process.env.BETTER_AUTH_URL ?? "";
   const inviteLink = token ? `${baseUrl}/convite/${token}` : null;
@@ -36,10 +42,34 @@ export default async function FamilyPage({
                 {member.name}
                 {member.id === user.id && <span className="ml-1 text-xs text-slate-400">(você)</span>}
               </span>
-              <span className="text-xs text-slate-400">{member.email}</span>
+              <span className="text-xs text-slate-400">
+                {member.email}
+                {member.phone && ` · 📱 +${member.phone}`}
+              </span>
             </li>
           ))}
         </ul>
+      </Card>
+
+      <Card title="WhatsApp" className="mb-4">
+        <p className="mb-3 text-sm text-slate-500">
+          Vincule seu número para usar o bot: lançar gastos, consultar saldo/fatura e receber o
+          resumo diário de contas a pagar. Mensagens de números não vinculados são ignoradas.
+        </p>
+        <form action={savePhoneAction} className="flex flex-wrap items-center gap-2">
+          <input
+            name="phone"
+            defaultValue={myPhone}
+            placeholder="(11) 99999-8888"
+            className={`${inputClass} max-w-56`}
+          />
+          <button type="submit" className={secondaryButtonClass}>
+            {myPhone ? "Atualizar número" : "Vincular número"}
+          </button>
+        </form>
+        {erro === "telefone" && (
+          <p className="mt-2 text-sm text-red-600">Número inválido — use DDD + número.</p>
+        )}
       </Card>
 
       <Card title="Convidar membro">

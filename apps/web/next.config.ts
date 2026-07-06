@@ -7,6 +7,7 @@ config({ path: path.resolve(__dirname, "../../.env") });
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@meusaldo/core", "@meusaldo/db"],
+  serverExternalPackages: ["drizzle-orm", "postgres", "node-cron"],
   output: "standalone",
 };
 

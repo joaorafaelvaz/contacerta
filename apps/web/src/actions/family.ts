@@ -1,8 +1,9 @@
 "use server";
 
 import { requireFamily, requireUser } from "@/lib/session";
-import { acceptInvite, createFamilyForUser, createInvite } from "@meusaldo/core";
-import { db } from "@meusaldo/db";
+import { acceptInvite, createFamilyForUser, createInvite, normalizePhoneBR } from "@meusaldo/core";
+import { db, schema } from "@meusaldo/db";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -23,6 +24,19 @@ export async function acceptInviteAction(formData: FormData) {
   const result = token ? await acceptInvite(db, { token, userId: user.id }) : null;
   if (!result) redirect("/onboarding?erro=convite");
   redirect("/");
+}
+
+export async function savePhoneAction(formData: FormData) {
+  const user = await requireFamily();
+  const raw = String(formData.get("phone") ?? "").trim();
+  const phone = raw ? normalizePhoneBR(raw) : null;
+  if (raw && !phone) redirect("/familia?erro=telefone");
+  await db
+    .update(schema.users)
+    .set({ phone, updatedAt: new Date() })
+    .where(eq(schema.users.id, user.id));
+  revalidatePath("/familia");
+  redirect("/familia");
 }
 
 export async function createInviteAction() {

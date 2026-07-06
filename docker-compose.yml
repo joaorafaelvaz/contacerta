@@ -27,6 +27,14 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-meusaldo}:${POSTGRES_PASSWORD:-meusaldo}@db:5432/${POSTGRES_DB:-meusaldo}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      WAHA_URL: ${WAHA_URL:-}
+      WAHA_API_KEY: ${WAHA_API_KEY:-}
+      WAHA_SESSION: ${WAHA_SESSION:-default}
+      WAHA_WEBHOOK_SECRET: ${WAHA_WEBHOOK_SECRET:-}
+      OLLAMA_URL: ${OLLAMA_URL:-http://localhost:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      REMINDER_CRON: ${REMINDER_CRON:-0 8 * * *}
+      TZ: ${TZ:-America/Sao_Paulo}
     ports:
       - "${APP_PORT:-3000}:3000"
 

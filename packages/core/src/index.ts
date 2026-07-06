@@ -4,6 +4,7 @@ export * from "./invoice";
 export * from "./installments";
 export * from "./recurrence";
 export * from "./notification";
+export * from "./whatsapp";
 export * from "./services/invoice-service";
 export * from "./services/recurrence-service";
 export * from "./services/balance-service";
