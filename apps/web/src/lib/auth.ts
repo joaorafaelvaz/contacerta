@@ -1,3 +1,4 @@
+import { expo } from "@better-auth/expo";
 import { db, schema } from "@meusaldo/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -23,5 +24,7 @@ export const auth = betterAuth({
   },
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
-  plugins: [nextCookies()],
+  trustedOrigins: ["meusaldo://"],
+  // nextCookies deve ser o último plugin
+  plugins: [expo(), nextCookies()],
 });

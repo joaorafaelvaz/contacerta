@@ -5,15 +5,17 @@ fatura e compras parceladas, contas a pagar com lembrete e orçamento por catego
 
 **Fase 1** ✅: núcleo financeiro + dashboard web.
 **Fase 2** ✅: bot WhatsApp via WAHA + resumo diário de lembretes.
-**Fase 3**: app móvel iOS/Android (Expo/React Native).
+**Fase 3** ✅: app móvel iOS/Android (Expo/React Native) + API tRPC.
 
 Specs: [Fase 1](docs/superpowers/specs/2026-07-06-meusaldo-design.md) ·
-[Fase 2](docs/superpowers/specs/2026-07-06-meusaldo-fase2-whatsapp-design.md)
+[Fase 2](docs/superpowers/specs/2026-07-06-meusaldo-fase2-whatsapp-design.md) ·
+[Fase 3](docs/superpowers/specs/2026-07-06-meusaldo-fase3-mobile-design.md)
 
 ## Stack
 
-- Monorepo pnpm: `apps/web` (Next.js 15 + Server Actions), `packages/core` (regras de
-  domínio puras + serviços), `packages/db` (Drizzle ORM + PostgreSQL)
+- Monorepo pnpm: `apps/web` (Next.js 15 + Server Actions), `apps/mobile` (Expo/React
+  Native), `packages/core` (regras de domínio puras + serviços), `packages/db`
+  (Drizzle ORM + PostgreSQL), `packages/api` (routers tRPC compartilhados)
 - Auth: better-auth (e-mail/senha) com conceito de **família** (dados compartilhados)
 - Dinheiro em centavos (integer); datas como strings ISO sem timezone
 
@@ -60,6 +62,26 @@ funcionando e o bot responde com a sintaxe de ajuda para o resto.
 O resumo diário (contas atrasadas, vencendo hoje/amanhã e faturas a ≤3 dias) sai no
 horário do `REMINDER_CRON` (padrão 8h, fuso `TZ`) e só é enviado quando há conteúdo.
 `POST /api/waha/digest` (mesmo secret) dispara o resumo manualmente.
+
+## App móvel (Fase 3)
+
+Abas: **Início** (saldos, faturas, vencimentos com pagar, orçamento), **Lançamentos**
+(mês + filtros, editar/excluir/pagar), **Novo** (lançamento rápido, com parcelamento
+em cartão) e **Cartões** (fatura por ciclo + pagar). Login com a mesma conta do
+dashboard (better-auth + SecureStore); a API é tRPC em `/api/trpc`, com tipos
+compartilhados via `packages/api`.
+
+**Testar no iPhone/Android (Expo Go):**
+
+```bash
+# descubra o IP local da máquina que roda o servidor (ipconfig) e:
+cd apps/mobile
+$env:EXPO_PUBLIC_API_URL='http://SEU_IP:3002'; npx expo start
+# escaneie o QR com o app Expo Go (mesma rede Wi-Fi)
+```
+
+Para instalar de verdade: `eas build` (Android gera APK direto; iOS exige conta
+Apple Developer + TestFlight).
 
 ## Convenções de domínio
 

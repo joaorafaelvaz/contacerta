@@ -1,0 +1,21 @@
+{
+  "name": "@meusaldo/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/root.ts",
+    "./trpc": "./src/trpc.ts"
+  },
+  "dependencies": {
+    "@meusaldo/core": "workspace:*",
+    "@meusaldo/db": "workspace:*",
+    "@trpc/server": "^11.18.0",
+    "drizzle-orm": "^0.44.2",
+    "superjson": "^2.2.6",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
