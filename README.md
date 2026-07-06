@@ -30,12 +30,20 @@ pnpm dev                      # http://localhost:3002
 pnpm test                     # testes de domínio (Vitest)
 ```
 
-## Deploy no VPS
+## Deploy no VPS (contacerta.linkwise.digital)
 
 ```bash
-# no VPS, com .env preenchido (BETTER_AUTH_SECRET forte, BETTER_AUTH_URL público):
+git clone https://github.com/joaorafaelvaz/contacerta.git && cd contacerta
+cp .env.example .env
+# preencha: BETTER_AUTH_SECRET forte, BETTER_AUTH_URL=https://contacerta.linkwise.digital,
+# POSTGRES_PASSWORD forte, WAHA_*/OLLAMA_* conforme os serviços do VPS
 docker compose --profile prod up -d --build
 ```
+
+Depois, aponte o reverse proxy do VPS (nginx/traefik/caddy) de
+`contacerta.linkwise.digital` (com TLS) para `localhost:${APP_PORT}` — o container
+publica a porta definida em `APP_PORT`. O webhook do WAHA usa
+`https://contacerta.linkwise.digital/api/waha/webhook`.
 
 O container do app aplica as migrations automaticamente na subida
 (`RUN_MIGRATIONS=true`, ver `apps/web/src/instrumentation.ts`). O Postgres fica no
