@@ -1,0 +1,21 @@
+{
+  "name": "@meusaldo/core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@meusaldo/db": "workspace:*",
+    "drizzle-orm": "^0.44.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

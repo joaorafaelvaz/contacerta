@@ -1,0 +1,15 @@
+export const DEFAULT_CATEGORIES: { name: string; type: "income" | "expense" }[] = [
+  { name: "Salário", type: "income" },
+  { name: "Outras receitas", type: "income" },
+  { name: "Moradia", type: "expense" },
+  { name: "Mercado", type: "expense" },
+  { name: "Alimentação fora", type: "expense" },
+  { name: "Transporte", type: "expense" },
+  { name: "Saúde", type: "expense" },
+  { name: "Educação", type: "expense" },
+  { name: "Lazer", type: "expense" },
+  { name: "Assinaturas", type: "expense" },
+  { name: "Vestuário", type: "expense" },
+  { name: "Impostos e taxas", type: "expense" },
+  { name: "Outros", type: "expense" },
+];
