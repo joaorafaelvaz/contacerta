@@ -1,11 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Text, View } from "react-native";
-import { colors, s } from "../lib/ui";
+import { useTheme } from "../lib/ui";
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
 /** Título de seção com ícone — substitui títulos soltos e emojis. */
 export function SectionTitle({ icon, children }: { icon: IconName; children: string }) {
+  const { colors } = useTheme();
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 }}>
       <Ionicons name={icon} size={15} color={colors.primary} />
@@ -16,6 +17,7 @@ export function SectionTitle({ icon, children }: { icon: IconName; children: str
 
 /** Estado vazio com ícone e mensagem. */
 export function Empty({ icon = "file-tray-outline", message }: { icon?: IconName; message: string }) {
+  const { colors, s } = useTheme();
   return (
     <View style={s.emptyBox}>
       <Ionicons name={icon} size={28} color={colors.mutedSoft} />
@@ -26,6 +28,7 @@ export function Empty({ icon = "file-tray-outline", message }: { icon?: IconName
 
 /** Indicador de carregamento centralizado. */
 export function Loading() {
+  const { colors } = useTheme();
   return (
     <View style={{ paddingVertical: 32, alignItems: "center" }}>
       <ActivityIndicator color={colors.primary} />
@@ -35,12 +38,17 @@ export function Loading() {
 
 /** Círculo de direção do lançamento (entrada/saída/transferência). */
 export function DirectionIcon({ type }: { type: string }) {
+  const { colors, s, isDark } = useTheme();
   const cfg =
     type === "income"
       ? { name: "arrow-up" as const, bg: colors.primarySoft, color: colors.primaryDark }
       : type === "expense"
         ? { name: "arrow-down" as const, bg: colors.dangerSoft, color: colors.danger }
-        : { name: "swap-horizontal" as const, bg: "#f1f5f9", color: colors.muted };
+        : {
+            name: "swap-horizontal" as const,
+            bg: isDark ? "#334155" : "#f1f5f9",
+            color: colors.muted,
+          };
   return (
     <View style={[s.iconCircle, { backgroundColor: cfg.bg }]}>
       <Ionicons name={cfg.name} size={16} color={cfg.color} />

@@ -36,10 +36,10 @@ export default async function CategoriesPage() {
             {items.length === 0 ? (
               <EmptyState message="Nenhuma categoria." />
             ) : (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {items.map((cat) => (
                   <li key={cat.id} className="flex items-center justify-between py-2">
-                    <span className="text-sm text-slate-800">{cat.name}</span>
+                    <span className="text-sm text-slate-800 dark:text-slate-200">{cat.name}</span>
                     <form action={deleteCategoryAction}>
                       <input type="hidden" name="id" value={cat.id} />
                       <ConfirmButton

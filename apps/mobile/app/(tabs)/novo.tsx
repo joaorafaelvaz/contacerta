@@ -12,11 +12,13 @@ import {
 } from "react-native";
 import { formatBRL, parseAmountToCents } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 type Source = { kind: "account" | "card"; id: string; name: string };
 
 export default function NewTransactionScreen() {
+  const { colors, s } = useTheme();
   const [type, setType] = useState<"expense" | "income">("expense");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -204,3 +206,5 @@ export default function NewTransactionScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+

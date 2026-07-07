@@ -27,18 +27,18 @@ import Link from "next/link";
 function DirectionIcon({ type }: { type: string }) {
   if (type === "income")
     return (
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
         <ArrowUpIcon className="h-4 w-4" />
       </span>
     );
   if (type === "expense")
     return (
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/50 text-red-500 dark:text-red-400">
         <ArrowDownIcon className="h-4 w-4" />
       </span>
     );
   return (
-    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
       <ArrowLeftRightIcon className="h-4 w-4" />
     </span>
   );
@@ -121,17 +121,17 @@ export default async function TransactionsPage({
             <Link
               href={qs({ mes: addMonthsYM(month, -1) })}
               aria-label="Mês anterior"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               ←
             </Link>
-            <span className="min-w-32 text-center text-sm font-semibold capitalize text-slate-800">
+            <span className="min-w-32 text-center text-sm font-semibold capitalize text-slate-800 dark:text-slate-200">
               {formatMonthPT(month)}
             </span>
             <Link
               href={qs({ mes: addMonthsYM(month, 1) })}
               aria-label="Próximo mês"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               →
             </Link>
@@ -175,12 +175,12 @@ export default async function TransactionsPage({
       </Card>
 
       <Card>
-        <div className="mb-2 flex flex-wrap gap-4 border-b border-slate-100 pb-3 text-xs text-slate-500">
+        <div className="mb-2 flex flex-wrap gap-4 border-b border-slate-100 pb-3 text-xs text-slate-500 dark:text-slate-400">
           <span>
-            Entradas: <Money cents={totalIncome} className="font-semibold text-emerald-700" />
+            Entradas: <Money cents={totalIncome} className="font-semibold text-emerald-700 dark:text-emerald-400" />
           </span>
           <span>
-            Saídas: <Money cents={totalExpense} className="font-semibold text-red-600" />
+            Saídas: <Money cents={totalExpense} className="font-semibold text-red-600 dark:text-red-400" />
           </span>
         </div>
         {txns.length === 0 ? (
@@ -189,7 +189,7 @@ export default async function TransactionsPage({
             action={{ href: "/lancamentos/novo", label: "Criar lançamento" }}
           />
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {txns.map((txn) => {
               const negative = txn.type === "expense" || txn.type === "transfer_out";
               const origin = txn.accountId
@@ -199,12 +199,12 @@ export default async function TransactionsPage({
                 <li key={txn.id} className="flex flex-wrap items-center gap-3 py-3">
                   <DirectionIcon type={txn.type} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-800">{txn.description}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="truncate text-sm font-medium text-slate-800 dark:text-slate-200">{txn.description}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {formatDateBR(txn.date)} · {origin}
                       {txn.categoryId && ` · ${categoryName.get(txn.categoryId) ?? ""}`}
                       {txn.status === "pending" && (
-                        <span className="ml-1.5 rounded-full bg-amber-50 px-2 py-0.5 font-medium text-amber-700">
+                        <span className="ml-1.5 rounded-full bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 font-medium text-amber-700 dark:text-amber-400">
                           pendente{txn.dueDate ? ` · vence ${formatDateBR(txn.dueDate)}` : ""}
                         </span>
                       )}

@@ -3,9 +3,11 @@ import { useRouter } from "expo-router";
 import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { Empty, Loading } from "../../components/ui";
 import { trpc } from "../../lib/trpc";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 export default function CardsScreen() {
+  const { colors, s } = useTheme();
   const router = useRouter();
   const cards = trpc.cards.list.useQuery();
 
@@ -50,3 +52,5 @@ export default function CardsScreen() {
     </View>
   );
 }
+
+

@@ -2,9 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import { authClient } from "../../lib/auth-client";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 export default function TabsLayout() {
+  const { colors, s } = useTheme();
   const { data: session, isPending } = authClient.useSession();
 
   if (isPending) {
@@ -57,3 +59,5 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+

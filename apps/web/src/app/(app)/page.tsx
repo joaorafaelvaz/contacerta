@@ -69,8 +69,8 @@ export default async function DashboardPage() {
   return (
     <>
       <div className="mb-4 flex items-baseline justify-between gap-2">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Visão geral</h1>
-        <p className="text-sm capitalize text-slate-500">{formatMonthPT(month)}</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Visão geral</h1>
+        <p className="text-sm capitalize text-slate-500 dark:text-slate-400">{formatMonthPT(month)}</p>
       </div>
 
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
           value={formatBRL(totalDue)}
           hint={
             overdueCount > 0 ? (
-              <span className="font-semibold text-red-600">
+              <span className="font-semibold text-red-600 dark:text-red-400">
                 {overdueCount} conta{overdueCount > 1 ? "s" : ""} atrasada{overdueCount > 1 ? "s" : ""}
               </span>
             ) : (
@@ -112,15 +112,15 @@ export default async function DashboardPage() {
             />
           ) : (
             <>
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {accounts.map((acc) => (
                   <li key={acc.id} className="flex justify-between py-2.5 text-sm">
-                    <span className="text-slate-700">{acc.name}</span>
+                    <span className="text-slate-700 dark:text-slate-300">{acc.name}</span>
                     <Money cents={acc.balanceCents} signed className="font-medium" />
                   </li>
                 ))}
               </ul>
-              <div className="mt-2 flex justify-between border-t border-slate-200 pt-2.5 text-sm font-bold">
+              <div className="mt-2 flex justify-between border-t border-slate-200 dark:border-slate-700 pt-2.5 text-sm font-bold">
                 <span>Total</span>
                 <Money cents={totalBalance} signed />
               </div>
@@ -135,17 +135,17 @@ export default async function DashboardPage() {
               action={{ href: "/cartoes/novo", label: "Cadastrar cartão" }}
             />
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-slate-100 dark:divide-slate-800">
               {invoices.map(({ card, invoice }) => (
                 <li key={card.id} className="flex items-center justify-between py-2.5 text-sm">
                   <div>
                     <Link
                       href={`/cartoes/${card.id}`}
-                      className="font-medium text-slate-700 hover:text-emerald-700"
+                      className="font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400"
                     >
                       {card.name}
                     </Link>
-                    <p className="text-xs text-slate-500">vence {formatDateBR(invoice.dueDate)}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">vence {formatDateBR(invoice.dueDate)}</p>
                   </div>
                   <Money cents={invoice.totalCents} className="font-medium" />
                 </li>
@@ -158,21 +158,21 @@ export default async function DashboardPage() {
           {upcoming.length === 0 ? (
             <EmptyState message="Nenhuma conta a pagar no período. 🎉" />
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-slate-100 dark:divide-slate-800">
               {upcoming.map((txn) => {
                 const overdue = txn.dueDate! < today;
                 return (
                   <li key={txn.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
                     <div className="min-w-0">
-                      <p className="truncate text-slate-700">{txn.description}</p>
+                      <p className="truncate text-slate-700 dark:text-slate-300">{txn.description}</p>
                       <p className="mt-0.5 text-xs">
                         {overdue ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 font-semibold text-red-700">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-red-50 dark:bg-red-950/50 px-2 py-0.5 font-semibold text-red-700 dark:text-red-300">
                             <AlertCircleIcon className="h-3 w-3" />
                             venceu {formatDateBR(txn.dueDate!)}
                           </span>
                         ) : (
-                          <span className="text-slate-500">vence {formatDateBR(txn.dueDate!)}</span>
+                          <span className="text-slate-500 dark:text-slate-400">vence {formatDateBR(txn.dueDate!)}</span>
                         )}
                       </p>
                     </div>
@@ -212,12 +212,12 @@ export default async function DashboardPage() {
                 return (
                   <li key={item.budgetId}>
                     <div className="mb-1 flex justify-between text-xs">
-                      <span className="font-medium text-slate-600">{item.categoryName}</span>
-                      <span className={over ? "font-semibold text-red-600" : "text-slate-500"}>
+                      <span className="font-medium text-slate-600 dark:text-slate-400">{item.categoryName}</span>
+                      <span className={over ? "font-semibold text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400"}>
                         <Money cents={item.spentCents} /> / <Money cents={item.budgetCents} />
                       </span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div
                         className={`h-full rounded-full transition-all ${over ? "bg-red-500" : "bg-emerald-500"}`}
                         style={{ width: `${pct}%` }}

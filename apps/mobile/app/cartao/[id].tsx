@@ -5,9 +5,11 @@ import { Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 
 import { Empty, Loading } from "../../components/ui";
 import { addMonthsYM, formatBRL, formatDateBR, formatMonthPT } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 export default function CardInvoiceScreen() {
+  const { colors, s } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [cycle, setCycle] = useState<string | undefined>(undefined);
   const [payAccountId, setPayAccountId] = useState<string | null>(null);
@@ -156,3 +158,5 @@ export default function CardInvoiceScreen() {
     </ScrollView>
   );
 }
+
+

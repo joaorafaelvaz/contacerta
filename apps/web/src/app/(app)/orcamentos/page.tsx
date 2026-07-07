@@ -33,14 +33,14 @@ export default async function BudgetsPage({
         <div className="flex items-center justify-center gap-2">
           <Link
             href={`/orcamentos?mes=${addMonthsYM(month, -1)}`}
-            className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50"
+            className="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             ←
           </Link>
           <span className="min-w-40 text-center font-semibold capitalize">{formatMonthPT(month)}</span>
           <Link
             href={`/orcamentos?mes=${addMonthsYM(month, 1)}`}
-            className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50"
+            className="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
           >
             →
           </Link>
@@ -76,12 +76,12 @@ export default async function BudgetsPage({
               return (
                 <li key={item.budgetId}>
                   <div className="mb-1 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-700">{item.categoryName}</span>
-                    <span className={over ? "font-semibold text-red-600" : "text-slate-500"}>
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{item.categoryName}</span>
+                    <span className={over ? "font-semibold text-red-600 dark:text-red-400" : "text-slate-500 dark:text-slate-400"}>
                       <Money cents={item.spentCents} /> / <Money cents={item.budgetCents} />
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className={`h-full rounded-full ${over ? "bg-red-500" : "bg-emerald-500"}`}
                       style={{ width: `${pct}%` }}

@@ -33,44 +33,44 @@ export default async function CardsPage() {
             <Card key={card.id}>
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
                     <CreditCardIcon className="h-5 w-5" />
                   </span>
                   <div>
                     <Link
                       href={`/cartoes/${card.id}`}
-                      className="font-semibold text-slate-800 hover:text-emerald-700"
+                      className="font-semibold text-slate-800 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400"
                     >
                       {card.name}
                     </Link>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Fecha dia {card.closingDay} · vence dia {card.dueDay}
                     </p>
                   </div>
                 </div>
                 <Link
                   href={`/cartoes/${card.id}/editar`}
-                  className="text-xs text-slate-500 hover:text-emerald-700"
+                  className="text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400"
                 >
                   Editar
                 </Link>
               </div>
               <div className="mt-4 flex items-end justify-between">
                 <div>
-                  <p className="text-xs text-slate-500">Fatura atual ({invoice.cycle})</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Fatura atual ({invoice.cycle})</p>
                   <Money cents={invoice.totalCents} className="text-lg font-bold" />
                 </div>
-                <p className="text-xs text-slate-500">vence {formatDateBR(invoice.dueDate)}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">vence {formatDateBR(invoice.dueDate)}</p>
               </div>
               {card.limitCents > 0 && (
                 <div className="mt-3">
-                  <div className="mb-1 flex justify-between text-xs text-slate-500">
+                  <div className="mb-1 flex justify-between text-xs text-slate-500 dark:text-slate-400">
                     <span>Limite usado</span>
                     <span>
                       <Money cents={invoice.pendingTotalCents} /> / <Money cents={card.limitCents} />
                     </span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className={`h-full rounded-full ${
                         invoice.pendingTotalCents > card.limitCents * 0.8
@@ -85,13 +85,13 @@ export default async function CardsPage() {
                 </div>
               )}
               <div className="mt-3 flex gap-2">
-                <Link href={`/cartoes/${card.id}`} className="text-sm font-medium text-emerald-700 hover:underline">
+                <Link href={`/cartoes/${card.id}`} className="text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:underline">
                   Ver fatura
                 </Link>
-                <span className="text-slate-300">·</span>
+                <span className="text-slate-300 dark:text-slate-600">·</span>
                 <Link
                   href={`/parcelamentos/novo?cartao=${card.id}`}
-                  className="text-sm font-medium text-emerald-700 hover:underline"
+                  className="text-sm font-medium text-emerald-700 dark:text-emerald-400 hover:underline"
                 >
                   Compra parcelada
                 </Link>

@@ -43,14 +43,14 @@ export default function RegisterPage() {
           placeholder="Senha (mín. 8 caracteres)"
           className={inputClass}
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <button type="submit" disabled={loading} className={buttonClass}>
           {loading ? "Criando..." : "Criar conta"}
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-slate-500">
+      <p className="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
         Já tem conta?{" "}
-        <Link href="/login" className="font-medium text-emerald-700 hover:underline">
+        <Link href="/login" className="font-medium text-emerald-700 dark:text-emerald-400 hover:underline">
           Entrar
         </Link>
       </p>

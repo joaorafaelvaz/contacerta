@@ -14,9 +14,11 @@ import {
 } from "react-native";
 import { parseAmountToCents } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 export default function EditTransactionScreen() {
+  const { colors, s } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const utils = trpc.useUtils();
@@ -221,3 +223,5 @@ export default function EditTransactionScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+

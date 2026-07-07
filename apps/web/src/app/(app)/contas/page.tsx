@@ -25,17 +25,17 @@ export default async function AccountsPage() {
         {accounts.length === 0 ? (
           <EmptyState message="Nenhuma conta cadastrada. Crie a primeira para começar." />
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {accounts.map((acc) => (
               <li key={acc.id} className="flex items-center justify-between gap-3 py-3">
                 <div>
                   <Link
                     href={`/contas/${acc.id}/editar`}
-                    className="font-medium text-slate-800 hover:text-emerald-700"
+                    className="font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-400"
                   >
                     {acc.name}
                   </Link>
-                  <p className="text-xs text-slate-500">{TYPE_LABELS[acc.type] ?? acc.type}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{TYPE_LABELS[acc.type] ?? acc.type}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Money cents={acc.balanceCents} signed className="font-semibold" />

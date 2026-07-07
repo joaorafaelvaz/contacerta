@@ -40,10 +40,10 @@ export function Nav() {
             className={`flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
               active
                 ? "bg-emerald-600 text-white shadow-sm"
-                : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
+                : "text-slate-600 dark:text-slate-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-800 dark:hover:text-emerald-300"
             }`}
           >
-            <Icon className={`h-4 w-4 ${active ? "text-emerald-100" : "text-slate-400"}`} />
+            <Icon className={`h-4 w-4 ${active ? "text-emerald-100" : "text-slate-400 dark:text-slate-500"}`} />
             {link.label}
           </Link>
         );

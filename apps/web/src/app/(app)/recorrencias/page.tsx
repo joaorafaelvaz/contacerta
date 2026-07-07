@@ -89,14 +89,14 @@ export default async function RecurringPage() {
         {rules.length === 0 ? (
           <EmptyState message="Nenhuma recorrência cadastrada." />
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {rules.map((rule) => (
               <li key={rule.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                 <div>
-                  <p className={`text-sm font-medium ${rule.active ? "text-slate-800" : "text-slate-400 line-through"}`}>
+                  <p className={`text-sm font-medium ${rule.active ? "text-slate-800 dark:text-slate-200" : "text-slate-400 dark:text-slate-500 line-through"}`}>
                     {rule.description}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Todo dia {rule.dayOfMonth} ·{" "}
                     {rule.accountId ? accountName.get(rule.accountId) : cardName.get(rule.creditCardId ?? "")}
                   </p>
@@ -109,7 +109,7 @@ export default async function RecurringPage() {
                   />
                   <form action={toggleRecurringRuleAction}>
                     <input type="hidden" name="id" value={rule.id} />
-                    <button type="submit" className="text-xs text-slate-500 hover:text-emerald-700">
+                    <button type="submit" className="text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400">
                       {rule.active ? "Pausar" : "Ativar"}
                     </button>
                   </form>

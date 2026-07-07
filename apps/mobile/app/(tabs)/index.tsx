@@ -5,14 +5,17 @@ import { Empty, Loading, SectionTitle } from "../../components/ui";
 import { authClient } from "../../lib/auth-client";
 import { formatBRL, formatDateBR, formatMonthPT } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 function Money({ cents, signed = false }: { cents: number; signed?: boolean }) {
+  const { colors, s } = useTheme();
   const color = signed ? (cents < 0 ? colors.danger : colors.primaryDark) : colors.text;
   return <Text style={[s.money, { color }]}>{formatBRL(cents)}</Text>;
 }
 
 export default function HomeScreen() {
+  const { colors, s } = useTheme();
   const router = useRouter();
   const overview = trpc.overview.get.useQuery();
   const utils = trpc.useUtils();
@@ -46,7 +49,7 @@ export default function HomeScreen() {
             style={[
               s.card,
               {
-                backgroundColor: totalBalance < 0 ? "#7f1d1d" : colors.primaryDark,
+                backgroundColor: totalBalance < 0 ? colors.heroDangerBg : colors.heroBg,
                 paddingVertical: 20,
               },
             ]}
@@ -213,3 +216,5 @@ export default function HomeScreen() {
     </ScrollView>
   );
 }
+
+

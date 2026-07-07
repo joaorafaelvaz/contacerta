@@ -46,32 +46,32 @@ export default async function CardInvoicePage({
           <div className="flex items-center gap-2">
             <Link
               href={`/cartoes/${card.id}?ciclo=${addMonthsYM(cycle, -1)}`}
-              className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50"
+              className="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               ←
             </Link>
             <span className="min-w-40 text-center font-semibold capitalize">
               {formatMonthPT(cycle)}
               {cycle === currentCycle && (
-                <span className="ml-1 text-xs font-normal text-emerald-600">(atual)</span>
+                <span className="ml-1 text-xs font-normal text-emerald-600 dark:text-emerald-400">(atual)</span>
               )}
             </span>
             <Link
               href={`/cartoes/${card.id}?ciclo=${addMonthsYM(cycle, 1)}`}
-              className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50"
+              className="rounded-md border border-slate-200 dark:border-slate-700 px-2 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               →
             </Link>
           </div>
           <div className="text-right text-sm">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Período {formatDateBR(invoice.start)} – {formatDateBR(invoice.end)} · vence{" "}
               {formatDateBR(invoice.dueDate)}
             </p>
             <p>
               Total: <Money cents={invoice.totalCents} className="font-bold" />
               {invoice.pendingTotalCents !== invoice.totalCents && (
-                <span className="ml-2 text-xs text-slate-500">
+                <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">
                   (pendente: <Money cents={invoice.pendingTotalCents} />)
                 </span>
               )}
@@ -86,7 +86,7 @@ export default async function CardInvoicePage({
             <input type="hidden" name="cardId" value={card.id} />
             <input type="hidden" name="cycle" value={cycle} />
             <label className="block">
-              <span className="text-xs font-medium text-slate-600">Debitar da conta</span>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Debitar da conta</span>
               <select
                 name="accountId"
                 required
@@ -104,7 +104,7 @@ export default async function CardInvoicePage({
               </select>
             </label>
             <label className="block">
-              <span className="text-xs font-medium text-slate-600">Data do pagamento</span>
+              <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Data do pagamento</span>
               <input type="date" name="date" defaultValue={todayISO()} className={inputClass} />
             </label>
             <button type="submit" className={primaryButtonClass}>
@@ -118,12 +118,12 @@ export default async function CardInvoicePage({
         {invoice.transactions.length === 0 ? (
           <EmptyState message="Nenhum lançamento neste ciclo." />
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {invoice.transactions.map((txn) => (
               <li key={txn.id} className="flex items-center justify-between gap-3 py-2">
                 <div>
-                  <p className="text-sm text-slate-800">{txn.description}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-slate-800 dark:text-slate-200">{txn.description}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {formatDateBR(txn.date)}
                     {txn.status === "paid" && " · pago"}
                   </p>

@@ -15,7 +15,7 @@ export default async function OnboardingPage({
   return (
     <AuthCard title={`Olá, ${user.name}! Falta só um passo.`}>
       <form action={createFamilyAction} className="space-y-3">
-        <p className="text-sm font-medium text-slate-700">Criar uma nova família</p>
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Criar uma nova família</p>
         <input
           name="name"
           required
@@ -27,21 +27,21 @@ export default async function OnboardingPage({
         </button>
       </form>
 
-      <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
+      <div className="my-6 flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
         <div className="h-px flex-1 bg-slate-200" />
         ou
         <div className="h-px flex-1 bg-slate-200" />
       </div>
 
       <form action={acceptInviteAction} className="space-y-3">
-        <p className="text-sm font-medium text-slate-700">Entrar numa família existente</p>
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Entrar numa família existente</p>
         <input name="token" required placeholder="Cole o link ou código do convite" className={inputClass} />
         {erro === "convite" && (
-          <p className="text-sm text-red-600">Convite inválido ou expirado.</p>
+          <p className="text-sm text-red-600 dark:text-red-400">Convite inválido ou expirado.</p>
         )}
         <button
           type="submit"
-          className="w-full rounded-md border border-emerald-600 px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
+          className="w-full rounded-md border border-emerald-600 dark:border-emerald-500 px-3 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
         >
           Usar convite
         </button>

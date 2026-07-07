@@ -40,14 +40,14 @@ export default function LoginPage() {
           placeholder="Senha"
           className={inputClass}
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <button type="submit" disabled={loading} className={buttonClass}>
           {loading ? "Entrando..." : "Entrar"}
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-slate-500">
+      <p className="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
         Não tem conta?{" "}
-        <Link href="/register" className="font-medium text-emerald-700 hover:underline">
+        <Link href="/register" className="font-medium text-emerald-700 dark:text-emerald-400 hover:underline">
           Criar conta
         </Link>
       </p>

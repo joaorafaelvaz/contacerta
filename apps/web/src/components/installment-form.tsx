@@ -109,11 +109,11 @@ export function InstallmentForm({
 
       {preview && (
         <div className="sm:col-span-2">
-          <p className="mb-1 text-xs font-medium text-slate-600">Prévia das parcelas</p>
-          <ul className="max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-md border border-slate-200 text-sm">
+          <p className="mb-1 text-xs font-medium text-slate-600 dark:text-slate-400">Prévia das parcelas</p>
+          <ul className="max-h-48 divide-y divide-slate-100 dark:divide-slate-800 overflow-y-auto rounded-md border border-slate-200 dark:border-slate-700 text-sm">
             {preview.map((item) => (
               <li key={item.number} className="flex justify-between px-3 py-1.5">
-                <span className="text-slate-600">
+                <span className="text-slate-600 dark:text-slate-400">
                   {item.number}/{preview.length} · fatura {item.cycle}
                 </span>
                 <span className="font-medium tabular-nums">{formatBRL(item.amountCents)}</span>

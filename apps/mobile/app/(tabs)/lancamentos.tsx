@@ -5,7 +5,8 @@ import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-na
 import { DirectionIcon, Empty, Loading } from "../../components/ui";
 import { addMonthsYM, formatBRL, formatDateBR, formatMonthPT, monthOfISO, todayISO } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
-import { colors, s } from "../../lib/ui";
+import { useTheme } from "../../lib/ui";
+
 
 const STATUS_FILTERS = [
   { key: undefined, label: "Todos" },
@@ -14,6 +15,7 @@ const STATUS_FILTERS = [
 ];
 
 export default function TransactionsScreen() {
+  const { colors, s } = useTheme();
   const router = useRouter();
   const [month, setMonth] = useState(() => monthOfISO(todayISO()));
   const [status, setStatus] = useState<"paid" | "pending" | undefined>(undefined);
@@ -126,3 +128,5 @@ export default function TransactionsScreen() {
     </View>
   );
 }
+
+

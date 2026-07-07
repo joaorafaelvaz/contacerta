@@ -13,7 +13,7 @@ export function SignOutButton() {
         router.push("/login");
         router.refresh();
       }}
-      className="text-xs text-slate-400 hover:text-red-600"
+      className="text-xs text-slate-400 dark:text-slate-500 hover:text-red-600"
     >
       Sair
     </button>

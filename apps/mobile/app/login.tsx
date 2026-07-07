@@ -10,9 +10,11 @@ import {
   View,
 } from "react-native";
 import { authClient } from "../lib/auth-client";
-import { colors, s } from "../lib/ui";
+import { useTheme } from "../lib/ui";
+
 
 export default function LoginScreen() {
+  const { colors, s } = useTheme();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const [email, setEmail] = useState("");
@@ -85,3 +87,5 @@ export default function LoginScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+

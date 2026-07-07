@@ -12,9 +12,15 @@ export const metadata: Metadata = {
   description: "Controle financeiro da família",
 };
 
+// aplica o tema antes da hidratação para não piscar claro→escuro
+const themeInit = `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+      </head>
       <body className={plexSans.className}>{children}</body>
     </html>
   );
