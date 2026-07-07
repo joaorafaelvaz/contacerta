@@ -1,7 +1,21 @@
 import { deleteTransactionAction, markPaidAction } from "@/actions/transactions";
 import { ConfirmButton } from "@/components/confirm-button";
+import {
+  ArrowDownIcon,
+  ArrowLeftRightIcon,
+  ArrowUpIcon,
+} from "@/components/icons";
 import { Money } from "@/components/money";
-import { Card, EmptyState, PageHeader, dangerButtonClass, secondaryButtonClass, selectClass } from "@/components/ui";
+import {
+  Card,
+  EmptyState,
+  PageHeader,
+  dangerButtonClass,
+  ghostActionClass,
+  listActionClass,
+  secondaryButtonClass,
+  selectCompactClass,
+} from "@/components/ui";
 import { getAccounts, getCards, getCategories } from "@/lib/data";
 import { formatDateBR, formatMonthPT } from "@/lib/format";
 import { requireFamily } from "@/lib/session";
@@ -10,12 +24,25 @@ import { db, schema } from "@meusaldo/db";
 import { and, asc, desc, eq, gte, lte, type SQL } from "drizzle-orm";
 import Link from "next/link";
 
-const TYPE_LABEL: Record<string, string> = {
-  income: "Receita",
-  expense: "Despesa",
-  transfer_in: "Transf. recebida",
-  transfer_out: "Transf. enviada",
-};
+function DirectionIcon({ type }: { type: string }) {
+  if (type === "income")
+    return (
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+        <ArrowUpIcon className="h-4 w-4" />
+      </span>
+    );
+  if (type === "expense")
+    return (
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-500">
+        <ArrowDownIcon className="h-4 w-4" />
+      </span>
+    );
+  return (
+    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+      <ArrowLeftRightIcon className="h-4 w-4" />
+    </span>
+  );
+}
 
 export default async function TransactionsPage({
   searchParams,
@@ -63,12 +90,24 @@ export default async function TransactionsPage({
     return `/lancamentos?${params.toString()}`;
   };
 
+  const totalIncome = txns
+    .filter((t) => t.type === "income")
+    .reduce((a, t) => a + t.amountCents, 0);
+  const totalExpense = txns
+    .filter((t) => t.type === "expense")
+    .reduce((a, t) => a + t.amountCents, 0);
+
   return (
     <>
-      <PageHeader title="Lançamentos" action={{ href: "/lancamentos/novo", label: "Novo lançamento" }} />
+      <PageHeader
+        title="Lançamentos"
+        subtitle={`${txns.length} registro${txns.length === 1 ? "" : "s"} em ${formatMonthPT(month)}`}
+        action={{ href: "/lancamentos/novo", label: "+ Novo lançamento" }}
+      />
 
       <div className="mb-4 flex flex-wrap gap-2">
         <Link href="/transferencias/nova" className={secondaryButtonClass}>
+          <ArrowLeftRightIcon className="h-4 w-4" />
           Transferência
         </Link>
         <Link href="/parcelamentos/novo" className={secondaryButtonClass}>
@@ -77,58 +116,78 @@ export default async function TransactionsPage({
       </div>
 
       <Card className="mb-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Link href={qs({ mes: addMonthsYM(month, -1) })} className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50">
+        <form method="get" className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Link
+              href={qs({ mes: addMonthsYM(month, -1) })}
+              aria-label="Mês anterior"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+            >
               ←
             </Link>
-            <span className="min-w-36 text-center text-sm font-semibold capitalize">{formatMonthPT(month)}</span>
-            <Link href={qs({ mes: addMonthsYM(month, 1) })} className="rounded-md border border-slate-200 px-2 py-1 text-sm hover:bg-slate-50">
+            <span className="min-w-32 text-center text-sm font-semibold capitalize text-slate-800">
+              {formatMonthPT(month)}
+            </span>
+            <Link
+              href={qs({ mes: addMonthsYM(month, 1) })}
+              aria-label="Próximo mês"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+            >
               →
             </Link>
           </div>
-          <form method="get" className="flex flex-wrap gap-2">
-            <input type="hidden" name="mes" value={month} />
-            <select name="origem" defaultValue={sp.origem ?? ""} className={`${selectClass} w-auto`}>
-              <option value="">Todas as origens</option>
-              <optgroup label="Contas">
-                {accounts.map((a) => (
-                  <option key={a.id} value={`acc:${a.id}`}>
-                    {a.name}
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="Cartões">
-                {cards.map((c) => (
-                  <option key={c.id} value={`card:${c.id}`}>
-                    {c.name}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-            <select name="categoria" defaultValue={sp.categoria ?? ""} className={`${selectClass} w-auto`}>
-              <option value="">Todas as categorias</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
+          <div className="mx-1 hidden h-6 w-px bg-slate-200 sm:block" />
+          <input type="hidden" name="mes" value={month} />
+          <select name="origem" defaultValue={sp.origem ?? ""} className={`${selectCompactClass} min-w-36`}>
+            <option value="">Todas as origens</option>
+            <optgroup label="Contas">
+              {accounts.map((a) => (
+                <option key={a.id} value={`acc:${a.id}`}>
+                  {a.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Cartões">
+              {cards.map((c) => (
+                <option key={c.id} value={`card:${c.id}`}>
                   {c.name}
                 </option>
               ))}
-            </select>
-            <select name="situacao" defaultValue={sp.situacao ?? ""} className={`${selectClass} w-auto`}>
-              <option value="">Pagos e pendentes</option>
-              <option value="paid">Pagos</option>
-              <option value="pending">Pendentes</option>
-            </select>
-            <button type="submit" className={secondaryButtonClass}>
-              Filtrar
-            </button>
-          </form>
-        </div>
+            </optgroup>
+          </select>
+          <select name="categoria" defaultValue={sp.categoria ?? ""} className={`${selectCompactClass} min-w-36`}>
+            <option value="">Todas as categorias</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <select name="situacao" defaultValue={sp.situacao ?? ""} className={`${selectCompactClass}`}>
+            <option value="">Pagos e pendentes</option>
+            <option value="paid">Pagos</option>
+            <option value="pending">Pendentes</option>
+          </select>
+          <button type="submit" className={secondaryButtonClass}>
+            Filtrar
+          </button>
+        </form>
       </Card>
 
       <Card>
+        <div className="mb-2 flex flex-wrap gap-4 border-b border-slate-100 pb-3 text-xs text-slate-500">
+          <span>
+            Entradas: <Money cents={totalIncome} className="font-semibold text-emerald-700" />
+          </span>
+          <span>
+            Saídas: <Money cents={totalExpense} className="font-semibold text-red-600" />
+          </span>
+        </div>
         {txns.length === 0 ? (
-          <EmptyState message="Nenhum lançamento no período." />
+          <EmptyState
+            message="Nenhum lançamento no período."
+            action={{ href: "/lancamentos/novo", label: "Criar lançamento" }}
+          />
         ) : (
           <ul className="divide-y divide-slate-100">
             {txns.map((txn) => {
@@ -137,31 +196,36 @@ export default async function TransactionsPage({
                 ? accountName.get(txn.accountId)
                 : cardName.get(txn.creditCardId ?? "");
               return (
-                <li key={txn.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
-                  <div className="min-w-0">
+                <li key={txn.id} className="flex flex-wrap items-center gap-3 py-3">
+                  <DirectionIcon type={txn.type} />
+                  <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-slate-800">{txn.description}</p>
-                    <p className="text-xs text-slate-400">
-                      {formatDateBR(txn.date)} · {origin} · {TYPE_LABEL[txn.type]}
+                    <p className="text-xs text-slate-500">
+                      {formatDateBR(txn.date)} · {origin}
                       {txn.categoryId && ` · ${categoryName.get(txn.categoryId) ?? ""}`}
                       {txn.status === "pending" && (
-                        <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-amber-700">
+                        <span className="ml-1.5 rounded-full bg-amber-50 px-2 py-0.5 font-medium text-amber-700">
                           pendente{txn.dueDate ? ` · vence ${formatDateBR(txn.dueDate)}` : ""}
                         </span>
                       )}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Money cents={negative ? -txn.amountCents : txn.amountCents} signed className="text-sm font-semibold" />
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <Money
+                      cents={negative ? -txn.amountCents : txn.amountCents}
+                      signed
+                      className="mr-1 text-sm font-semibold"
+                    />
                     {txn.status === "pending" && txn.accountId && (
                       <form action={markPaidAction}>
                         <input type="hidden" name="id" value={txn.id} />
-                        <button type="submit" className="text-xs font-medium text-emerald-700 hover:underline">
-                          Marcar pago
+                        <button type="submit" className={listActionClass}>
+                          Pagar
                         </button>
                       </form>
                     )}
                     {!txn.transferGroupId && (
-                      <Link href={`/lancamentos/${txn.id}/editar`} className="text-xs text-slate-500 hover:text-emerald-700">
+                      <Link href={`/lancamentos/${txn.id}/editar`} className={ghostActionClass}>
                         Editar
                       </Link>
                     )}
@@ -188,3 +252,4 @@ export default async function TransactionsPage({
     </>
   );
 }
+

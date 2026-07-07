@@ -1,3 +1,4 @@
+import { CreditCardIcon } from "@/components/icons";
 import { Money } from "@/components/money";
 import { Card, EmptyState, PageHeader } from "@/components/ui";
 import { formatDateBR } from "@/lib/format";
@@ -31,20 +32,25 @@ export default async function CardsPage() {
           {withInvoices.map(({ card, invoice }) => (
             <Card key={card.id}>
               <div className="flex items-start justify-between">
-                <div>
-                  <Link
-                    href={`/cartoes/${card.id}`}
-                    className="font-semibold text-slate-800 hover:text-emerald-700"
-                  >
-                    {card.name}
-                  </Link>
-                  <p className="text-xs text-slate-400">
-                    Fecha dia {card.closingDay} · vence dia {card.dueDay}
-                  </p>
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <CreditCardIcon className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <Link
+                      href={`/cartoes/${card.id}`}
+                      className="font-semibold text-slate-800 hover:text-emerald-700"
+                    >
+                      {card.name}
+                    </Link>
+                    <p className="text-xs text-slate-500">
+                      Fecha dia {card.closingDay} · vence dia {card.dueDay}
+                    </p>
+                  </div>
                 </div>
                 <Link
                   href={`/cartoes/${card.id}/editar`}
-                  className="text-xs text-slate-400 hover:text-emerald-700"
+                  className="text-xs text-slate-500 hover:text-emerald-700"
                 >
                   Editar
                 </Link>
@@ -54,8 +60,30 @@ export default async function CardsPage() {
                   <p className="text-xs text-slate-500">Fatura atual ({invoice.cycle})</p>
                   <Money cents={invoice.totalCents} className="text-lg font-bold" />
                 </div>
-                <p className="text-xs text-slate-400">vence {formatDateBR(invoice.dueDate)}</p>
+                <p className="text-xs text-slate-500">vence {formatDateBR(invoice.dueDate)}</p>
               </div>
+              {card.limitCents > 0 && (
+                <div className="mt-3">
+                  <div className="mb-1 flex justify-between text-xs text-slate-500">
+                    <span>Limite usado</span>
+                    <span>
+                      <Money cents={invoice.pendingTotalCents} /> / <Money cents={card.limitCents} />
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className={`h-full rounded-full ${
+                        invoice.pendingTotalCents > card.limitCents * 0.8
+                          ? "bg-red-500"
+                          : "bg-emerald-500"
+                      }`}
+                      style={{
+                        width: `${Math.min(100, Math.round((invoice.pendingTotalCents / card.limitCents) * 100))}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
               <div className="mt-3 flex gap-2">
                 <Link href={`/cartoes/${card.id}`} className="text-sm font-medium text-emerald-700 hover:underline">
                   Ver fatura

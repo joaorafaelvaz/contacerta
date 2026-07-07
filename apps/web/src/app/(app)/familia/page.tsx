@@ -40,9 +40,9 @@ export default async function FamilyPage({
             <li key={member.id} className="flex items-center justify-between py-2">
               <span className="text-sm font-medium text-slate-800">
                 {member.name}
-                {member.id === user.id && <span className="ml-1 text-xs text-slate-400">(você)</span>}
+                {member.id === user.id && <span className="ml-1 text-xs text-slate-500">(você)</span>}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 {member.email}
                 {member.phone && ` · 📱 +${member.phone}`}
               </span>

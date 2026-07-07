@@ -1,6 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Empty, Loading } from "../../components/ui";
 import { addMonthsYM, formatBRL, formatDateBR, formatMonthPT } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
 import { colors, s } from "../../lib/ui";
@@ -53,16 +55,23 @@ export default function CardInvoiceScreen() {
         <RefreshControl refreshing={query.isRefetching} onRefresh={() => query.refetch()} />
       }
     >
-      {query.isLoading && <Text style={s.emptyText}>Carregando...</Text>}
+      {query.isLoading && <Loading />}
       {d && shownCycle && (
         <>
           <View style={s.card}>
-            <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text, textAlign: "center" }}>
-              💳 {d.card.name}
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <Ionicons name="card" size={17} color={colors.primaryDark} />
+              <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text, textAlign: "center" }}>
+                {d.card.name}
+              </Text>
+            </View>
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 8 }}>
-              <TouchableOpacity style={s.chip} onPress={() => setCycle(addMonthsYM(shownCycle, -1))}>
-                <Text style={s.chipText}>←</Text>
+              <TouchableOpacity
+                style={s.chip}
+                onPress={() => setCycle(addMonthsYM(shownCycle, -1))}
+                accessibilityLabel="Fatura anterior"
+              >
+                <Ionicons name="chevron-back" size={16} color={colors.text} />
               </TouchableOpacity>
               <View style={{ minWidth: 140, alignItems: "center" }}>
                 <Text style={{ fontWeight: "700", color: colors.text, textTransform: "capitalize" }}>
@@ -72,8 +81,12 @@ export default function CardInvoiceScreen() {
                   <Text style={{ color: colors.primary, fontSize: 11 }}>(atual)</Text>
                 )}
               </View>
-              <TouchableOpacity style={s.chip} onPress={() => setCycle(addMonthsYM(shownCycle, 1))}>
-                <Text style={s.chipText}>→</Text>
+              <TouchableOpacity
+                style={s.chip}
+                onPress={() => setCycle(addMonthsYM(shownCycle, 1))}
+                accessibilityLabel="Próxima fatura"
+              >
+                <Ionicons name="chevron-forward" size={16} color={colors.text} />
               </TouchableOpacity>
             </View>
             <Text style={{ color: colors.muted, fontSize: 12, textAlign: "center", marginTop: 8 }}>
@@ -119,7 +132,7 @@ export default function CardInvoiceScreen() {
           <View style={s.card}>
             <Text style={s.cardTitle}>Lançamentos da fatura</Text>
             {d.invoice.transactions.length === 0 && (
-              <Text style={s.emptyText}>Nenhum lançamento neste ciclo.</Text>
+              <Empty icon="receipt-outline" message="Nenhum lançamento neste ciclo." />
             )}
             {d.invoice.transactions.map((txn) => (
               <View key={txn.id} style={s.row}>

@@ -35,7 +35,7 @@ export default async function AccountsPage() {
                   >
                     {acc.name}
                   </Link>
-                  <p className="text-xs text-slate-400">{TYPE_LABELS[acc.type] ?? acc.type}</p>
+                  <p className="text-xs text-slate-500">{TYPE_LABELS[acc.type] ?? acc.type}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Money cents={acc.balanceCents} signed className="font-semibold" />

@@ -7,3 +7,34 @@
 body {
   @apply bg-slate-100 text-slate-900 antialiased;
 }
+
+/* Tailwind v4 mudou o preflight para cursor:default em botões — devolve a affordance */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* anel de foco consistente para navegação por teclado */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* nav horizontal no mobile rola sem exibir scrollbar */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

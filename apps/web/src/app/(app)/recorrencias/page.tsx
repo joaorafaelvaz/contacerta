@@ -96,7 +96,7 @@ export default async function RecurringPage() {
                   <p className={`text-sm font-medium ${rule.active ? "text-slate-800" : "text-slate-400 line-through"}`}>
                     {rule.description}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Todo dia {rule.dayOfMonth} ·{" "}
                     {rule.accountId ? accountName.get(rule.accountId) : cardName.get(rule.creditCardId ?? "")}
                   </p>

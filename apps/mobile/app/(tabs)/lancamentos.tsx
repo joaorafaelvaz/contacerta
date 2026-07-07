@@ -1,6 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { DirectionIcon, Empty, Loading } from "../../components/ui";
 import { addMonthsYM, formatBRL, formatDateBR, formatMonthPT, monthOfISO, todayISO } from "../../lib/format";
 import { trpc } from "../../lib/trpc";
 import { colors, s } from "../../lib/ui";
@@ -29,14 +31,22 @@ export default function TransactionsScreen() {
     <View style={s.screen}>
       <View style={{ padding: 12, gap: 10 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 16 }}>
-          <TouchableOpacity style={s.chip} onPress={() => setMonth((m) => addMonthsYM(m, -1))}>
-            <Text style={s.chipText}>←</Text>
+          <TouchableOpacity
+            style={s.chip}
+            onPress={() => setMonth((m) => addMonthsYM(m, -1))}
+            accessibilityLabel="Mês anterior"
+          >
+            <Ionicons name="chevron-back" size={16} color={colors.text} />
           </TouchableOpacity>
           <Text style={{ fontWeight: "700", color: colors.text, textTransform: "capitalize", minWidth: 140, textAlign: "center" }}>
             {formatMonthPT(month)}
           </Text>
-          <TouchableOpacity style={s.chip} onPress={() => setMonth((m) => addMonthsYM(m, 1))}>
-            <Text style={s.chipText}>→</Text>
+          <TouchableOpacity
+            style={s.chip}
+            onPress={() => setMonth((m) => addMonthsYM(m, 1))}
+            accessibilityLabel="Próximo mês"
+          >
+            <Ionicons name="chevron-forward" size={16} color={colors.text} />
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row", gap: 8, justifyContent: "center" }}>
@@ -63,9 +73,7 @@ export default function TransactionsScreen() {
           <RefreshControl refreshing={list.isRefetching} onRefresh={() => list.refetch()} />
         }
         ListEmptyComponent={
-          <Text style={s.emptyText}>
-            {list.isLoading ? "Carregando..." : "Nenhum lançamento no período."}
-          </Text>
+          list.isLoading ? <Loading /> : <Empty message="Nenhum lançamento no período." />
         }
         renderItem={({ item }) => {
           const { txn } = item;
@@ -77,7 +85,8 @@ export default function TransactionsScreen() {
               disabled={!!txn.transferGroupId}
               onPress={() => router.push(`/lancamento/${txn.id}`)}
             >
-              <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 8 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                <DirectionIcon type={txn.type} />
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: colors.text, fontWeight: "500" }} numberOfLines={1}>
                     {txn.description}
@@ -92,7 +101,7 @@ export default function TransactionsScreen() {
                     </Text>
                   )}
                 </View>
-                <View style={{ alignItems: "flex-end", gap: 4 }}>
+                <View style={{ alignItems: "flex-end", gap: 6 }}>
                   <Text
                     style={[s.money, { color: negative ? colors.danger : colors.primaryDark }]}
                   >
@@ -100,12 +109,12 @@ export default function TransactionsScreen() {
                   </Text>
                   {txn.status === "pending" && txn.accountId && (
                     <TouchableOpacity
+                      style={s.listAction}
                       onPress={() => markPaid.mutate({ id: txn.id })}
                       disabled={markPaid.isPending}
+                      accessibilityLabel={`Marcar ${txn.description} como paga`}
                     >
-                      <Text style={{ color: colors.primary, fontWeight: "700", fontSize: 13 }}>
-                        Pagar
-                      </Text>
+                      <Text style={s.listActionText}>Pagar</Text>
                     </TouchableOpacity>
                   )}
                 </View>

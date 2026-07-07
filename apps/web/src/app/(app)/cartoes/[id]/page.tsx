@@ -64,7 +64,7 @@ export default async function CardInvoicePage({
             </Link>
           </div>
           <div className="text-right text-sm">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Período {formatDateBR(invoice.start)} – {formatDateBR(invoice.end)} · vence{" "}
               {formatDateBR(invoice.dueDate)}
             </p>
@@ -123,7 +123,7 @@ export default async function CardInvoicePage({
               <li key={txn.id} className="flex items-center justify-between gap-3 py-2">
                 <div>
                   <p className="text-sm text-slate-800">{txn.description}</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     {formatDateBR(txn.date)}
                     {txn.status === "paid" && " · pago"}
                   </p>
@@ -140,3 +140,4 @@ export default async function CardInvoicePage({
     </>
   );
 }
+

@@ -1,5 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { Empty, Loading } from "../../components/ui";
 import { trpc } from "../../lib/trpc";
 import { colors, s } from "../../lib/ui";
 
@@ -17,24 +19,31 @@ export default function CardsScreen() {
           <RefreshControl refreshing={cards.isRefetching} onRefresh={() => cards.refetch()} />
         }
         ListEmptyComponent={
-          <Text style={s.emptyText}>
-            {cards.isLoading ? "Carregando..." : "Nenhum cartão. Cadastre pelo dashboard web."}
-          </Text>
+          cards.isLoading ? (
+            <Loading />
+          ) : (
+            <Empty icon="card-outline" message="Nenhum cartão. Cadastre pelo dashboard web." />
+          )
         }
         renderItem={({ item: card }) => (
           <TouchableOpacity
             style={[s.card, { marginBottom: 8 }]}
             onPress={() => router.push(`/cartao/${card.id}`)}
           >
-            <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text }}>
-              💳 {card.name}
-            </Text>
-            <Text style={{ color: colors.muted, fontSize: 12, marginTop: 2 }}>
-              Fecha dia {card.closingDay} · vence dia {card.dueDay}
-            </Text>
-            <Text style={{ color: colors.primary, fontWeight: "600", fontSize: 13, marginTop: 8 }}>
-              Ver fatura →
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <View style={[s.iconCircle, { backgroundColor: colors.primarySoft }]}>
+                <Ionicons name="card" size={17} color={colors.primaryDark} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: "700", color: colors.text }}>
+                  {card.name}
+                </Text>
+                <Text style={{ color: colors.muted, fontSize: 12, marginTop: 1 }}>
+                  Fecha dia {card.closingDay} · vence dia {card.dueDay}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.mutedSoft} />
+            </View>
           </TouchableOpacity>
         )}
       />

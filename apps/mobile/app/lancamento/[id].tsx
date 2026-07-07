@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -66,8 +67,8 @@ export default function EditTransactionScreen() {
 
   const sources = useMemo(
     () => [
-      ...(accounts.data ?? []).map((a) => ({ key: `account:${a.id}`, name: a.name })),
-      ...(cards.data ?? []).map((c) => ({ key: `card:${c.id}`, name: `💳 ${c.name}` })),
+      ...(accounts.data ?? []).map((a) => ({ key: `account:${a.id}`, name: a.name, kind: "account" as const })),
+      ...(cards.data ?? []).map((c) => ({ key: `card:${c.id}`, name: c.name, kind: "card" as const })),
     ],
     [accounts.data, cards.data],
   );
@@ -166,6 +167,11 @@ export default function EditTransactionScreen() {
                   style={[s.chip, active && s.chipActive]}
                   onPress={() => setSourceKey(src.key)}
                 >
+                  <Ionicons
+                    name={src.kind === "card" ? "card-outline" : "wallet-outline"}
+                    size={14}
+                    color={active ? "#fff" : colors.muted}
+                  />
                   <Text style={[s.chipText, active && s.chipTextActive]}>{src.name}</Text>
                 </TouchableOpacity>
               );

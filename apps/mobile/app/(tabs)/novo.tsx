@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import {
   Alert,
@@ -44,7 +45,7 @@ export default function NewTransactionScreen() {
   const sources: Source[] = useMemo(
     () => [
       ...(accounts.data ?? []).map((a) => ({ kind: "account" as const, id: a.id, name: a.name })),
-      ...(cards.data ?? []).map((c) => ({ kind: "card" as const, id: c.id, name: `💳 ${c.name}` })),
+      ...(cards.data ?? []).map((c) => ({ kind: "card" as const, id: c.id, name: c.name })),
     ],
     [accounts.data, cards.data],
   );
@@ -149,6 +150,11 @@ export default function NewTransactionScreen() {
                   style={[s.chip, active && s.chipActive]}
                   onPress={() => setSource(src)}
                 >
+                  <Ionicons
+                    name={src.kind === "card" ? "card-outline" : "wallet-outline"}
+                    size={14}
+                    color={active ? "#fff" : colors.muted}
+                  />
                   <Text style={[s.chipText, active && s.chipTextActive]}>{src.name}</Text>
                 </TouchableOpacity>
               );

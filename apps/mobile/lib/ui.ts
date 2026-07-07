@@ -3,12 +3,16 @@ import { StyleSheet } from "react-native";
 export const colors = {
   primary: "#059669",
   primaryDark: "#047857",
+  primarySoft: "#ecfdf5",
   bg: "#f1f5f9",
   card: "#ffffff",
   text: "#1e293b",
-  muted: "#94a3b8",
+  // slate-500: contraste 4.76:1 sobre branco (o antigo #94a3b8 reprovava WCAG)
+  muted: "#64748b",
+  mutedSoft: "#94a3b8",
   border: "#e2e8f0",
   danger: "#dc2626",
+  dangerSoft: "#fef2f2",
   warn: "#b45309",
   warnBg: "#fef3c7",
 };
@@ -49,14 +53,20 @@ export const s = StyleSheet.create({
   },
   button: {
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: 12,
+    minHeight: 48, // alvo de toque mínimo (Apple HIG: 44pt)
     paddingVertical: 12,
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: { color: "#fff", fontWeight: "700", fontSize: 15 },
   chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    minHeight: 36,
     paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: colors.border,
@@ -65,6 +75,29 @@ export const s = StyleSheet.create({
   chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipText: { fontSize: 13, color: colors.text },
   chipTextActive: { color: "#fff", fontWeight: "600" },
+  /** ação pequena de lista (Pagar) com área de toque adequada */
+  listAction: {
+    minHeight: 36,
+    minWidth: 56,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#a7f3d0",
+    backgroundColor: colors.primarySoft,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listActionText: { color: colors.primaryDark, fontWeight: "700", fontSize: 13 },
+  /** círculo de ícone para direção do lançamento */
+  iconCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   money: { fontVariant: ["tabular-nums"], fontWeight: "600" },
   emptyText: { textAlign: "center", color: colors.muted, paddingVertical: 20, fontSize: 13 },
+  emptyBox: { alignItems: "center", gap: 6, paddingVertical: 20 },
 });
