@@ -1,3 +1,5 @@
+# Desenvolvimento local: só o Postgres (o app roda com `pnpm dev`).
+# Produção/VPS: use deploy/portainer-stack.yml (Portainer ou deploy/deploy.sh).
 services:
   db:
     image: postgres:17-alpine
@@ -7,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-meusaldo}
       POSTGRES_DB: ${POSTGRES_DB:-meusaldo}
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      - "${POSTGRES_PORT:-5434}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -15,28 +17,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-  app:
-    profiles: ["prod"]
-    build: .
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-meusaldo}:${POSTGRES_PASSWORD:-meusaldo}@db:5432/${POSTGRES_DB:-meusaldo}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
-      WAHA_URL: ${WAHA_URL:-}
-      WAHA_API_KEY: ${WAHA_API_KEY:-}
-      WAHA_SESSION: ${WAHA_SESSION:-default}
-      WAHA_WEBHOOK_SECRET: ${WAHA_WEBHOOK_SECRET:-}
-      OLLAMA_URL: ${OLLAMA_URL:-http://localhost:11434}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
-      REMINDER_CRON: ${REMINDER_CRON:-0 8 * * *}
-      TZ: ${TZ:-America/Sao_Paulo}
-    ports:
-      - "${APP_PORT:-3000}:3000"
 
 volumes:
   pgdata:

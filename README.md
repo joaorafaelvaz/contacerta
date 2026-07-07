@@ -32,18 +32,36 @@ pnpm test                     # testes de domínio (Vitest)
 
 ## Deploy no VPS (contacerta.linkwise.digital)
 
+Tudo em [deploy/](deploy): stack do Portainer, env de produção, script CLI e conf
+do nginx. O app sobe em `127.0.0.1:3078` (só o nginx nativo alcança) e as
+migrations rodam automaticamente na subida do container.
+
+**Via Portainer** — Stacks → Add stack → *Repository*:
+`https://github.com/joaorafaelvaz/contacerta` (repo privado: configure credenciais
+GitHub no Portainer), compose path `deploy/portainer-stack.yml`, e cole as
+variáveis de [deploy/env.prod.example](deploy/env.prod.example) preenchidas.
+
+**Via CLI** (alternativa):
+
 ```bash
 git clone https://github.com/joaorafaelvaz/contacerta.git && cd contacerta
-cp .env.example .env
-# preencha: BETTER_AUTH_SECRET forte, BETTER_AUTH_URL=https://contacerta.linkwise.digital,
-# POSTGRES_PASSWORD forte, WAHA_*/OLLAMA_* conforme os serviços do VPS
-docker compose --profile prod up -d --build
+cp deploy/env.prod.example .env.prod && nano .env.prod   # segredos + WAHA/Ollama
+./deploy/deploy.sh
 ```
 
-Depois, aponte o reverse proxy do VPS (nginx/traefik/caddy) de
-`contacerta.linkwise.digital` (com TLS) para `localhost:${APP_PORT}` — o container
-publica a porta definida em `APP_PORT`. O webhook do WAHA usa
-`https://contacerta.linkwise.digital/api/waha/webhook`.
+**nginx nativo + TLS:**
+
+```bash
+sudo cp deploy/nginx-contacerta.conf /etc/nginx/sites-available/contacerta
+sudo ln -s /etc/nginx/sites-available/contacerta /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot --nginx -d contacerta.linkwise.digital
+```
+
+**WAHA:** configure o webhook da sessão para
+`https://contacerta.linkwise.digital/api/waha/webhook` com o header
+`x-webhook-secret` = `WAHA_WEBHOOK_SECRET`. Do container, alcance WAHA/Ollama do
+host via `http://host.docker.internal:<porta>`.
 
 O container do app aplica as migrations automaticamente na subida
 (`RUN_MIGRATIONS=true`, ver `apps/web/src/instrumentation.ts`). O Postgres fica no
