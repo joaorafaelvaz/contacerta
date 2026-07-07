@@ -1,0 +1,2 @@
+# scripts shell precisam de LF no checkout (CRLF quebra o bash no VPS)
+*.sh text eol=lf
