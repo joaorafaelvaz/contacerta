@@ -1,9 +1,9 @@
 "use server";
 
-import { getMoneyCents, getOptionalString, getString } from "@/lib/forms";
+import { getOptionalString, getString } from "@/lib/forms";
 import { assertFamilyOwns } from "@/lib/guards";
 import { requireFamily } from "@/lib/session";
-import { parseAmountToCents } from "@meusaldo/core";
+import { parseSignedAmountToCents } from "@meusaldo/core";
 import { db, schema } from "@meusaldo/db";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -17,12 +17,9 @@ function parseType(form: FormData) {
   return type;
 }
 
+// saldo inicial pode ser zero (conta zerada) ou negativo (no vermelho)
 function parseInitialBalance(form: FormData): number {
-  const raw = getOptionalString(form, "initialBalance");
-  if (!raw) return 0;
-  const negative = raw.trim().startsWith("-");
-  const cents = parseAmountToCents(raw.replace(/^-/, ""));
-  return negative ? -cents : cents;
+  return parseSignedAmountToCents(getOptionalString(form, "initialBalance") ?? "");
 }
 
 export async function createAccountAction(formData: FormData) {

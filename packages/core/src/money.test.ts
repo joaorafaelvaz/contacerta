@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBRL, parseAmountToCents } from "./money";
+import { formatBRL, parseAmountToCents, parseSignedAmountToCents } from "./money";
 
 describe("parseAmountToCents", () => {
   it("aceita formato brasileiro completo", () => {
@@ -30,6 +30,35 @@ describe("parseAmountToCents", () => {
     expect(() => parseAmountToCents("")).toThrow();
     expect(() => parseAmountToCents("-10")).toThrow();
     expect(() => parseAmountToCents("0")).toThrow();
+  });
+});
+
+describe("parseSignedAmountToCents", () => {
+  it("aceita zero em qualquer formato (saldo inicial zerado)", () => {
+    expect(parseSignedAmountToCents("0")).toBe(0);
+    expect(parseSignedAmountToCents("0,00")).toBe(0);
+    expect(parseSignedAmountToCents("0.00")).toBe(0);
+    expect(parseSignedAmountToCents("R$ 0,00")).toBe(0);
+  });
+
+  it("vazio vira zero", () => {
+    expect(parseSignedAmountToCents("")).toBe(0);
+    expect(parseSignedAmountToCents("   ")).toBe(0);
+  });
+
+  it("aceita negativos (conta no vermelho)", () => {
+    expect(parseSignedAmountToCents("-50")).toBe(-5000);
+    expect(parseSignedAmountToCents("-1.234,56")).toBe(-123456);
+  });
+
+  it("mantém positivos", () => {
+    expect(parseSignedAmountToCents("1.000,00")).toBe(100000);
+    expect(parseSignedAmountToCents("250")).toBe(25000);
+  });
+
+  it("rejeita lixo", () => {
+    expect(() => parseSignedAmountToCents("abc")).toThrow();
+    expect(() => parseSignedAmountToCents("-xyz")).toThrow();
   });
 });
 

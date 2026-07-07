@@ -4,13 +4,10 @@ export function formatBRL(cents: number): string {
   return brl.format(cents / 100);
 }
 
-/**
- * Converte entrada do usuário em centavos. Aceita "1.234,56", "1234,56",
- * "1234.56", "R$ 250" e "250".
- */
-export function parseAmountToCents(input: string): number {
+/** Interpreta a string como número decimal, entendendo formatos pt-BR e en. */
+function normalizeToNumber(input: string): number {
   const cleaned = input.replace(/[R$\s]/g, "");
-  if (!cleaned) throw new Error("Valor vazio");
+  if (!cleaned) return Number.NaN;
 
   let normalized = cleaned;
   const lastComma = cleaned.lastIndexOf(",");
@@ -28,8 +25,30 @@ export function parseAmountToCents(input: string): number {
     // milhar apenas quando seguido de exatamente 3 dígitos no fim.
     if (/^\d{1,3}(\.\d{3})+$/.test(cleaned)) normalized = cleaned.replace(/\./g, "");
   }
+  return Number(normalized);
+}
 
-  const value = Number(normalized);
+/**
+ * Converte entrada do usuário em centavos. Aceita "1.234,56", "1234,56",
+ * "1234.56", "R$ 250" e "250". Exige valor estritamente positivo (uso em
+ * lançamentos) — para saldo inicial use parseSignedAmountToCents.
+ */
+export function parseAmountToCents(input: string): number {
+  const value = normalizeToNumber(input);
   if (!Number.isFinite(value) || value <= 0) throw new Error(`Valor inválido: ${input}`);
   return Math.round(value * 100);
+}
+
+/**
+ * Como parseAmountToCents, mas aceita zero e valores negativos — usado no saldo
+ * inicial de uma conta (que pode começar zerada ou no vermelho). Vazio = 0.
+ */
+export function parseSignedAmountToCents(input: string): number {
+  const trimmed = input.trim();
+  if (!trimmed) return 0;
+  const negative = trimmed.startsWith("-");
+  const value = normalizeToNumber(trimmed.replace(/^-/, ""));
+  if (!Number.isFinite(value) || value < 0) throw new Error(`Valor inválido: ${input}`);
+  const cents = Math.round(value * 100);
+  return negative ? -cents : cents;
 }
