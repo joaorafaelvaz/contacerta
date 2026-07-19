@@ -29,20 +29,29 @@ export async function POST(req: NextRequest) {
   if (p.fromMe && p.from !== p.to) return ok();
 
   const phone = normalizePhoneBR(from);
-  if (!phone) return ok();
+  if (!phone) {
+    console.log(`[bot] mensagem ignorada: remetente inválido (${from})`);
+    return ok();
+  }
 
   const [user] = await db
     .select({ id: schema.users.id, familyId: schema.users.familyId })
     .from(schema.users)
     .where(eq(schema.users.phone, phone));
-  // número não vinculado: ignora em silêncio (segurança)
-  if (!user?.familyId) return ok();
+  // número não vinculado: ignora (segurança) — resposta ao caller continua ok
+  if (!user?.familyId) {
+    console.log(`[bot] mensagem ignorada: número não vinculado a nenhum usuário (${phone})`);
+    return ok();
+  }
 
+  console.log(`[bot] ${phone}: "${text.slice(0, 60)}" — processando...`);
   try {
     const reply = await handleBotMessage(db, { userId: user.id, familyId: user.familyId }, text);
+    console.log(`[bot] resposta: "${reply.slice(0, 100).replace(/\n/g, " · ")}"`);
     await new WahaChannel().send(from, reply);
+    console.log("[bot] resposta enviada via WAHA");
   } catch (err) {
-    console.error("[bot] erro ao processar mensagem:", err);
+    console.error("[bot] erro ao processar/enviar:", err);
     try {
       await new WahaChannel().send(from, "😵 Algo deu errado ao processar sua mensagem. Tente de novo.");
     } catch {
