@@ -4,6 +4,7 @@ import {
   matchByName,
   normalizePhoneBR,
   parseFixedCommand,
+  phoneCandidatesBR,
   validateLlmIntent,
 } from "./whatsapp";
 
@@ -25,6 +26,29 @@ describe("normalizePhoneBR", () => {
   it("rejeita entradas curtas ou longas demais", () => {
     expect(normalizePhoneBR("123")).toBeNull();
     expect(normalizePhoneBR("1234567890123456")).toBeNull();
+  });
+});
+
+describe("phoneCandidatesBR", () => {
+  it("número de 13 dígitos gera também a variante sem o nono dígito", () => {
+    expect(phoneCandidatesBR("5548999073477")).toEqual(["5548999073477", "554899073477"]);
+  });
+
+  it("número de 12 dígitos (JID do WhatsApp) gera também a variante com o nono dígito", () => {
+    expect(phoneCandidatesBR("554899073477@c.us")).toEqual(["554899073477", "5548999073477"]);
+  });
+
+  it("13 dígitos cujo terceiro dígito local não é 9 fica só com uma variante", () => {
+    // assinante começando com 8: não há nono dígito a remover
+    expect(phoneCandidatesBR("5511876543210")).toEqual(["5511876543210"]);
+  });
+
+  it("local sem nono dígito no padrão celular fica com uma variante só", () => {
+    expect(phoneCandidatesBR("14155552671")).toEqual(["5514155552671"]);
+  });
+
+  it("entrada inválida gera lista vazia", () => {
+    expect(phoneCandidatesBR("123")).toEqual([]);
   });
 });
 

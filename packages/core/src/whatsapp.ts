@@ -17,6 +17,27 @@ export function normalizePhoneBR(input: string): string | null {
   return digits;
 }
 
+/**
+ * Variantes brasileiras equivalentes do número: com e sem o nono dígito.
+ * O JID do WhatsApp usa a forma SEM o nono dígito para muitas contas BR
+ * (ex: 554899073477), enquanto o número real tem 13 dígitos (5548999073477).
+ * Buscar pelas duas variantes evita que o vínculo falhe por grafia.
+ */
+export function phoneCandidatesBR(input: string): string[] {
+  const phone = normalizePhoneBR(input);
+  if (!phone) return [];
+  const candidates = new Set([phone]);
+  if (phone.startsWith("55")) {
+    const local = phone.slice(2); // DDD + assinante
+    if (local.length === 11 && local[2] === "9") {
+      candidates.add(`55${local.slice(0, 2)}${local.slice(3)}`); // remove o nono dígito
+    } else if (local.length === 10) {
+      candidates.add(`55${local.slice(0, 2)}9${local.slice(2)}`); // insere o nono dígito
+    }
+  }
+  return [...candidates];
+}
+
 // ---------------------------------------------------------------------------
 // Comandos fixos (resolvidos sem LLM)
 // ---------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 import { handleBotMessage } from "@/lib/bot/router";
 import { WahaChannel } from "@/lib/bot/waha";
-import { normalizePhoneBR } from "@meusaldo/core";
+import { normalizePhoneBR, phoneCandidatesBR } from "@meusaldo/core";
 import { db, schema } from "@meusaldo/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { NextResponse, type NextRequest } from "next/server";
 
 const ok = () => NextResponse.json({ ok: true });
@@ -34,14 +34,27 @@ export async function POST(req: NextRequest) {
     return ok();
   }
 
+  // busca pelas variantes com/sem o nono dígito (o JID do WhatsApp costuma
+  // omitir o 9 que o usuário digita ao cadastrar o número)
+  const candidates = phoneCandidatesBR(phone);
   const [user] = await db
-    .select({ id: schema.users.id, familyId: schema.users.familyId })
+    .select({ id: schema.users.id, familyId: schema.users.familyId, phone: schema.users.phone })
     .from(schema.users)
-    .where(eq(schema.users.phone, phone));
+    .where(inArray(schema.users.phone, candidates));
   // número não vinculado: ignora (segurança) — resposta ao caller continua ok
   if (!user?.familyId) {
     console.log(`[bot] mensagem ignorada: número não vinculado a nenhum usuário (${phone})`);
     return ok();
+  }
+
+  // auto-corrige o cadastro para a grafia do JID: garante que envios ativos
+  // (resumo diário) usem o endereço que o WhatsApp de fato entrega
+  if (user.phone !== phone) {
+    console.log(`[bot] atualizando telefone do usuário para a grafia do WhatsApp (${user.phone} → ${phone})`);
+    await db
+      .update(schema.users)
+      .set({ phone, updatedAt: new Date() })
+      .where(eq(schema.users.id, user.id));
   }
 
   console.log(`[bot] ${phone}: "${text.slice(0, 60)}" — processando...`);
