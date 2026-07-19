@@ -173,6 +173,28 @@ export interface LlmIntent {
   installments: number;
 }
 
+/**
+ * Extrai o objeto JSON da resposta de um LLM, tolerando cercas de markdown
+ * (```json ... ```) e texto ao redor — modelos cloud costumam ignorar o
+ * parâmetro `format` e embrulhar a resposta.
+ */
+export function extractLlmJson(content: string): unknown | null {
+  let t = content.trim();
+  const fence = t.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fence?.[1]) t = fence[1].trim();
+  if (!t.startsWith("{")) {
+    const start = t.indexOf("{");
+    const end = t.lastIndexOf("}");
+    if (start === -1 || end <= start) return null;
+    t = t.slice(start, end + 1);
+  }
+  try {
+    return JSON.parse(t);
+  } catch {
+    return null;
+  }
+}
+
 /** Valida/sanitiza o JSON vindo do LLM; retorna null se inutilizável. */
 export function validateLlmIntent(raw: unknown): LlmIntent | null {
   if (typeof raw !== "object" || raw === null) return null;

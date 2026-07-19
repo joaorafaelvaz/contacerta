@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  extractLlmJson,
   formatDigest,
   matchByName,
   normalizePhoneBR,
@@ -74,6 +75,32 @@ describe("parseFixedCommand", () => {
   it("devolve null para linguagem natural (vai ao LLM)", () => {
     expect(parseFixedCommand("mercado 250 nubank")).toBeNull();
     expect(parseFixedCommand("recebi 500 de freela")).toBeNull();
+  });
+});
+
+describe("extractLlmJson", () => {
+  it("aceita JSON puro", () => {
+    expect(extractLlmJson('{"intent":"transaction"}')).toEqual({ intent: "transaction" });
+  });
+
+  it("remove cerca de markdown ```json (caso gemma cloud)", () => {
+    const fenced = '```json\n{"intent":"transaction","amount":25}\n```';
+    expect(extractLlmJson(fenced)).toEqual({ intent: "transaction", amount: 25 });
+  });
+
+  it("remove cerca de markdown sem linguagem", () => {
+    expect(extractLlmJson('```\n{"a":1}\n```')).toEqual({ a: 1 });
+  });
+
+  it("recorta JSON cercado de texto explicativo", () => {
+    const chatty = 'Claro! Aqui está o resultado:\n{"a":1,"b":{"c":2}}\nEspero ter ajudado.';
+    expect(extractLlmJson(chatty)).toEqual({ a: 1, b: { c: 2 } });
+  });
+
+  it("devolve null para conteúdo sem JSON", () => {
+    expect(extractLlmJson("não consegui entender a mensagem")).toBeNull();
+    expect(extractLlmJson("")).toBeNull();
+    expect(extractLlmJson("{quebrado")).toBeNull();
   });
 });
 

@@ -1,4 +1,4 @@
-import { type LlmIntent, validateLlmIntent } from "@meusaldo/core";
+import { extractLlmJson, type LlmIntent, validateLlmIntent } from "@meusaldo/core";
 
 const INTENT_SCHEMA = {
   type: "object",
@@ -24,7 +24,7 @@ export interface IntentContext {
 function systemPrompt(ctx: IntentContext): string {
   return [
     "Você extrai lançamentos financeiros de mensagens em português do Brasil.",
-    "Responda SOMENTE com o JSON pedido.",
+    "Responda SOMENTE com o objeto JSON, sem cercas de código (```), sem explicações.",
     "",
     `Contas do usuário: ${ctx.accounts.join(", ") || "(nenhuma)"}`,
     `Cartões de crédito: ${ctx.cards.join(", ") || "(nenhum)"}`,
@@ -70,7 +70,15 @@ export async function extractIntent(
       return null;
     }
     const data = (await res.json()) as { message?: { content?: string } };
-    return validateLlmIntent(JSON.parse(data.message?.content ?? "{}"));
+    const content = data.message?.content ?? "";
+    // modelos (sobretudo os :cloud) ignoram o `format` e devolvem o JSON
+    // dentro de cercas de markdown — extractLlmJson tolera isso
+    const parsed = extractLlmJson(content);
+    if (parsed === null) {
+      console.error(`[bot] Ollama devolveu conteúdo sem JSON utilizável: "${content.slice(0, 120)}"`);
+      return null;
+    }
+    return validateLlmIntent(parsed);
   } catch (err) {
     console.error("[bot] Ollama indisponível:", err);
     return null;
