@@ -9,7 +9,17 @@ const ok = () => NextResponse.json({ ok: true });
 
 export async function POST(req: NextRequest) {
   const secret = process.env.WAHA_WEBHOOK_SECRET;
-  if (secret && req.headers.get("x-webhook-secret") !== secret) {
+  // sem secret o endpoint fica aberto na internet e qualquer um poderia criar
+  // lançamentos: em produção isso é erro de configuração, não modo permissivo
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "[bot] WAHA_WEBHOOK_SECRET não configurado — webhook recusado. Defina a variável e recrie o container.",
+      );
+      return NextResponse.json({ error: "webhook not configured" }, { status: 503 });
+    }
+    console.warn("[bot] WAHA_WEBHOOK_SECRET vazio (permitido só fora de produção)");
+  } else if (req.headers.get("x-webhook-secret") !== secret) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

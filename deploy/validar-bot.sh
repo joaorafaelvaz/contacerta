@@ -86,7 +86,11 @@ enviar "Mensagem qualquer"   "bom dia, tudo bem"                       "Não ent
 echo "──────────────────────────────────────────"
 echo "Resultado: $ok/$total cenários OK"
 echo
-echo "Lançamentos de teste criados (12,34 / 56,78 / 98,76). Para remover:"
+echo "Lançamentos de teste criados (12,34 / 56,78 / 98,76). Confira antes de apagar:"
+echo "  docker exec $DB psql -U $PGUSER_ -d $PGDB_ -c \\"
+echo "    \"SELECT description, amount_cents, date FROM transactions WHERE amount_cents IN (1234, 5678, 3292, 3291);\""
+echo
+echo "Para remover (a exclusão da compra parcelada já remove as parcelas em cascata):"
 echo "  docker exec $DB psql -U $PGUSER_ -d $PGDB_ -c \\"
 echo "    \"DELETE FROM installment_purchases WHERE total_amount_cents = 9876;"
-echo "     DELETE FROM transactions WHERE amount_cents IN (1234, 5678) OR description LIKE '%(1/3)%' OR description LIKE '%(2/3)%' OR description LIKE '%(3/3)%';\""
+echo "     DELETE FROM transactions WHERE amount_cents IN (1234, 5678);\""
